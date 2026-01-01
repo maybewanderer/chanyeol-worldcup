@@ -218,7 +218,7 @@ export default function App() {
     const fullImageUrl = window.location.origin + finalWinner.imgUrl;
     
     // 트위터 메시지에 사진 URL을 포함시켜 미리보기가 뜨도록 유도합니다.
-    const text = `🍒 #취향의찬열 테스트 결과\n\n${nickname} 님이 선택한 취향의 찬열은... [${finalWinner.name}]입니다!\n찬프님도 지금 참여해보세요!\n"${randomQuote}"\n\n결과 보기: ${fullImageUrl}\n\n직접 참여하기:`;
+    const text = `🍒 취향의 찬열 테스트 결과\n\n${nickname} 님이 선택한 취향의 찬열은... [${finalWinner.name}]입니다!\n찬프님도 지금 참여해보세요!\n"${randomQuote}"\n\n결과 보기: ${fullImageUrl}\n\n직접 참여하기: #찬열 #CHANYEOL #취향의찬열`;
     
     const url = window.location.href;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
