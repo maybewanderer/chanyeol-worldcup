@@ -185,7 +185,18 @@ export default function App() {
     } else if (step === 'result') {
       document.title = `💘 ${nickname} 님이 선택하신 취향의 찬열`;
     }
+    // 2. 파비콘 변경 (index.html 없이 자바스크립트로 주입)
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    // 아래 경로의 'cherry.png' 부분을 실제 파일명으로 수정하세요.
+    // 캐시 방지를 위해 뒤에 ?v=1 을 붙여두는 것이 좋습니다.
+    link.href = '/images/cherry.png?v=1';
   }, [step, roundInfo.round, nickname]);
+
 
   const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
