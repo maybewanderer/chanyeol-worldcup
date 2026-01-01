@@ -176,6 +176,17 @@ export default function App() {
   const [toast, setToast] = useState({ show: false, message: '' });
   const [randomQuote, setRandomQuote] = useState('');
 
+// --- 브라우저 탭 타이틀 동적 변경 로직 ---
+  useEffect(() => {
+    if (step === 'welcome') {
+      document.title = "💘 취향의 찬열 | 시작하기";
+    } else if (step === 'playing') {
+      document.title = `💘 취향의 찬열 (${roundInfo.round}강)`;
+    } else if (step === 'result') {
+      document.title = `💘 ${nickname} 님이 선택하신 취향의 찬열`;
+    }
+  }, [step, roundInfo.round, nickname]);
+
   const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
   const startGame = () => {
