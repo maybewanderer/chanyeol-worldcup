@@ -1,26 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Share2, RefreshCw, Heart, ChevronRight, User, Sparkles, Wand2, Twitter, ExternalLink } from 'lucide-react';
 
-// --- API 설정 (Gemini API용) ---
-const apiKey = ""; 
-
-async function callGemini(prompt) {
-  try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
-    });
-    const result = await response.json();
-    return result.candidates?.[0]?.content?.parts?.[0]?.text || "분석 결과를 가져오지 못했습니다.";
-  } catch (error) {
-    return "AI 분석 중 오류가 발생했습니다.";
-  }
-}
-
-
+// --- 찬열 랜덤 어록 데이터 ---
+const CHANYEOL_QUOTES = [
+  "누가 오늘 나한테 옷 벗으라고 소리지르더라;",
+  "아멀랑~~~~~~~~",
+  "이게 왜 좋아??",
+  "웃겨 진짜~~~~~~",
+  "초콜릿 대신 나",
+  "웃겨 진짜~~~~~",
+  "사랑해❤️"
+];
 // --- 데이터 생성 로직 (확장자가 다른 경우) ---
 const generateCandidates = () => {
   // 1. 여기에 실제 파일명과 확장자를 직접 입력하세요.
@@ -157,7 +147,6 @@ const generateCandidates = () => {
     // ... 나머지 128개까지 파일명과 확장자를 맞춰서 입력하세요.
   ];
 
-
   if (photoList.length < 128) {
     for (let i = photoList.length + 1; i <= 128; i++) {
       photoList.push({
@@ -185,8 +174,7 @@ export default function App() {
   const [roundInfo, setRoundInfo] = useState({ round: 128, current: 1, total: 64 });
   const [finalWinner, setFinalWinner] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '' });
-  
-  const [aiMessage, setAiMessage] = useState('');
+  const [randomQuote, setRandomQuote] = useState('');
 
   const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
@@ -210,9 +198,9 @@ export default function App() {
 
     if (candidates.length <= 2) {
       setFinalWinner(selected);
+      const randomIndex = Math.floor(Math.random() * CHANYEOL_QUOTES.length);
+      setRandomQuote(CHANYEOL_QUOTES[randomIndex]);
       setStep('result');
-      callGemini(`"${nickname}"님이 우승자로 "${selected.name}"을 뽑았어. 찬열이가 말하는 듯한 소감 부탁해.`)
-        .then(setAiMessage);
     } else if (roundInfo.current < roundInfo.total) {
       setDisplays([candidates[nextMatchIndex], candidates[nextMatchIndex + 1]]);
       setRoundInfo(prev => ({ ...prev, current: prev.current + 1 }));
@@ -226,7 +214,12 @@ export default function App() {
   };
 
   const shareToTwitter = () => {
-    const text = `🍒 취향의 찬열 테스트 결과\n\n${nickname} 님이 선택한 취향의 찬열은... [${finalWinner.name}]입니다!\n\n찬프 여러분도 지금 참여해보세요! #찬열 #CHANYEOL #취향의찬열`;
+    // 현재 웹사이트의 도메인을 포함한 전체 이미지 주소를 생성합니다.
+    const fullImageUrl = window.location.origin + finalWinner.imgUrl;
+    
+    // 트위터 메시지에 사진 URL을 포함시켜 미리보기가 뜨도록 유도합니다.
+    const text = `🍒 #취향의찬열 테스트 결과\n\n${nickname} 님이 선택한 취향의 찬열은... [${finalWinner.name}]입니다!\n찬프님도 지금 참여해보세요!\n"${randomQuote}"\n\n결과 보기: ${fullImageUrl}\n\n직접 참여하기:`;
+    
     const url = window.location.href;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
     window.open(twitterUrl, '_blank');
@@ -239,16 +232,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white font-sans overflow-x-hidden p-4 flex flex-col items-center justify-between">
-      {/* 배경 애니메이션 */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-30">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-pink-600 rounded-full blur-[100px] animate-pulse"></div>
         <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-purple-600 rounded-full blur-[100px] animate-pulse"></div>
       </div>
 
-      {/* 메인 콘텐츠 영역 (중앙 정렬을 위해 flex-grow 사용) */}
       <div className="relative z-10 w-full max-w-4xl flex-grow flex flex-col items-center justify-center">
         {step === 'welcome' && (
-          <div className="bg-slate-800/50 backdrop-blur-xl p-8 rounded-3xl border border-slate-700 shadow-2xl text-center max-w-md mx-auto w-full">
+          <div className="bg-slate-800/50 backdrop-blur-xl p-8 rounded-3xl border border-slate-700 shadow-2xl text-center max-w-md mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Heart className="w-16 h-16 text-pink-500 mx-auto mb-4 animate-bounce" />
             <h1 className="text-3xl font-black mb-2 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">취향의 찬열</h1>
             <p className="text-slate-400 mb-8">내 취향의 찬열이를 골라주세요 💘</p>
@@ -256,8 +247,8 @@ export default function App() {
             <div className="space-y-4">
               <input 
                 type="text" 
-                placeholder="찬프" 
-                className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-pink-500 transition-all text-white"
+                placeholder="닉네임을 입력하세요" 
+                className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-pink-500 transition-all text-white placeholder:text-slate-600"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
               />
@@ -315,18 +306,23 @@ export default function App() {
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent"></div>
               <div className="absolute bottom-8 left-0 right-0 text-3xl font-black">{finalWinner.name}</div>
             </div>
-            {aiMessage && <div className="bg-slate-800/80 p-6 rounded-2xl mb-6 border border-pink-500/30 text-slate-200 italic">"{aiMessage}"</div>}
+            
+            <div className="bg-slate-800/80 p-6 rounded-2xl mb-6 border border-pink-500/30 text-slate-200 min-h-[80px] flex flex-col items-center justify-center gap-2">
+              <Sparkles className="w-5 h-5 text-pink-400" />
+              <p className="italic font-medium text-lg">"{randomQuote}"</p>
+              <p className="text-[10px] text-slate-500">- 찬열 -</p>
+            </div>
             
             <div className="grid grid-cols-2 gap-3 mb-4">
               <button 
                 onClick={shareToTwitter}
-                className="bg-[#1DA1F2] hover:bg-[#1a8cd8] py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
+                className="bg-[#1DA1F2] hover:bg-[#1a8cd8] py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95"
               >
                 <Twitter className="w-5 h-5" /> 트위터 공유
               </button>
               <button 
                 onClick={() => setStep('welcome')}
-                className="bg-slate-800 hover:bg-slate-700 py-4 rounded-xl font-bold transition-all border border-slate-600 flex items-center justify-center gap-2"
+                className="bg-slate-800 hover:bg-slate-700 py-4 rounded-xl font-bold transition-all border border-slate-600 flex items-center justify-center gap-2 active:scale-95"
               >
                 <RefreshCw className="w-5 h-5" /> 다시하기
               </button>
@@ -335,7 +331,6 @@ export default function App() {
         )}
       </div>
 
-      {/* 푸터 영역 (에러 방지를 위해 메인 div 내부 최하단 배치) */}
       <footer className="relative z-10 mt-8 mb-4 opacity-60 hover:opacity-100 transition-opacity">
         <a 
           href="https://x.com/thecityscape" 
