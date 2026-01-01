@@ -180,7 +180,7 @@ export default function App() {
 
   const startGame = () => {
     if (!nickname.trim()) {
-      showToast('닉네임을 입력해주세요!');
+      showToast('닉네임을 입력해주세요 ㅠㅍㅠ');
       return;
     }
     const shuffled = shuffleArray(INITIAL_CANDIDATES);
@@ -213,18 +213,17 @@ export default function App() {
     }
   };
 
-  const shareToTwitter = () => {
+const shareToTwitter = () => {
     // 현재 웹사이트의 도메인을 포함한 전체 이미지 주소를 생성합니다.
     const fullImageUrl = window.location.origin + finalWinner.imgUrl;
-    
-    // 트위터 메시지에 사진 URL을 포함시켜 미리보기가 뜨도록 유도합니다.
-    const text = `🍒 취향의 찬열 테스트 결과\n\n${nickname} 님이 선택한 취향의 찬열은... [${finalWinner.name}]입니다!\n찬프님도 지금 참여해보세요!\n"${randomQuote}"\n\n결과 보기: ${fullImageUrl}\n\n직접 참여하기: #찬열 #CHANYEOL #취향의찬열`;
-    
     const url = window.location.href;
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    
+    // 트위터 메시지 구성 (직접 참여하기 주소 링크 다음에 태그가 뜨도록 수정)
+    const text = `🍒 취향의 찬열 토너먼트 결과\n\n${nickname} 님이 선택한 취향의 찬열은 [${finalWinner.name}] 입니다!\n"${randomQuote}"\n\n💘 결과 사진: ${fullImageUrl}\n💘 직접 참여하기: ${url}\n\n#찬열 #CHANYEOL #취향의찬열`;
+    
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(twitterUrl, '_blank');
   };
-
   const showToast = (msg) => {
     setToast({ show: true, message: msg });
     setTimeout(() => setToast({ show: false, message: '' }), 3000);
@@ -247,7 +246,7 @@ export default function App() {
             <div className="space-y-4">
               <input 
                 type="text" 
-                placeholder="닉네임을 입력하세요" 
+                placeholder="찬프" 
                 className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-pink-500 transition-all text-white placeholder:text-slate-600"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
@@ -256,7 +255,7 @@ export default function App() {
                 onClick={startGame}
                 className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:scale-[1.02] active:scale-95 transition-all py-4 rounded-xl font-bold text-lg shadow-lg shadow-pink-500/20"
               >
-                128강 시작하기
+                128강 시작 ㅇㅍㅇ♡
               </button>
             </div>
           </div>
@@ -324,7 +323,7 @@ export default function App() {
                 onClick={() => setStep('welcome')}
                 className="bg-slate-800 hover:bg-slate-700 py-4 rounded-xl font-bold transition-all border border-slate-600 flex items-center justify-center gap-2 active:scale-95"
               >
-                <RefreshCw className="w-5 h-5" /> 다시하기
+                <RefreshCw className="w-5 h-5" /> 다시 고르기
               </button>
             </div>
           </div>
