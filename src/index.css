@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* 만약 위 한 줄로 안 된다면 기존 방식대로 아래 세 줄을 쓰세요 */
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; 
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: black;
+  margin: 0;
+}
